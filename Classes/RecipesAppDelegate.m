@@ -111,7 +111,20 @@
 
         RecipeDetailViewController *detailViewController = [storyboard instantiateViewControllerWithIdentifier:@"RecipeDetailViewController"];
         
-        detailViewController.recipe = (Recipe *)[self.fetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+        // Edit the entity name as appropriate.
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Recipe" inManagedObjectContext:self.managedObjectContext];
+        [fetchRequest setEntity:entity];
+        
+        
+        
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", uniqueIdentifier];
+        [fetchRequest setPredicate:predicate];
+        
+        NSError *error = nil;
+        NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+        
+        detailViewController.recipe = [results objectAtIndex:0];
         
         UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
         UINavigationController *navController = tabBarController.viewControllers[0];

@@ -71,7 +71,7 @@ static NSString *kAddRecipeSegueID = @"addRecipe";
     
     [super viewDidLoad];
     
-    [self searchSpotlight];
+   // [self searchSpotlight];
     
     // add the table's edit button to the left side of the nav bar
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
@@ -171,6 +171,32 @@ static NSString *kAddRecipeSegueID = @"addRecipe";
     
 	Recipe *recipe = (Recipe *)[self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.recipe = recipe;
+    
+    // Create an attribute set for an item that represents an image.
+    CSSearchableItemAttributeSet* attributeSet = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:(NSString *)kUTTypeImage];
+    // Set properties that describe attributes of the item such as title, description, and image.
+    attributeSet.title = recipe.name;
+    attributeSet.contentDescription = recipe.overview;
+    
+    NSLog(@"%@",attributeSet.title);
+    
+    //UIImage *guacamoleImage = recipe.thumbnailImage;
+    
+    
+    NSData *imgData= UIImagePNGRepresentation(recipe.thumbnailImage);
+    attributeSet.thumbnailData = imgData;
+    
+    // Create a searchable item, specifying its ID, associated domain, and the attribute set you created earlier.
+    CSSearchableItem *item;
+    NSString *identifier = [NSString stringWithFormat:@"%@",attributeSet.title];
+    
+     item = [[CSSearchableItem alloc] initWithUniqueIdentifier:identifier domainIdentifier:@"com.example.apple-samplecode.recipes.search" attributeSet:attributeSet];
+
+    // Index the item.
+    [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[item] completionHandler: ^(NSError * __nullable error) {
+        NSLog(@"Search item indexed");
+        
+    }];
 }
 
 
