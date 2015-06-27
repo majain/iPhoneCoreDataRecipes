@@ -105,33 +105,12 @@
         NSString *uniqueIdentifier = [userActivity.userInfo objectForKey:CSSearchableItemActivityIdentifier];
         NSLog(@"%@",uniqueIdentifier);
         
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:
-                                    @"Storyboard" bundle:[NSBundle mainBundle]];
+        // Launch Detail controller
+        [self launchDetailViewController:uniqueIdentifier];
         
-
-        RecipeDetailViewController *detailViewController = [storyboard instantiateViewControllerWithIdentifier:@"RecipeDetailViewController"];
-        
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-        // Edit the entity name as appropriate.
-        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Recipe" inManagedObjectContext:self.managedObjectContext];
-        [fetchRequest setEntity:entity];
-        
-        
-        
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", uniqueIdentifier];
-        [fetchRequest setPredicate:predicate];
-        
-        NSError *error = nil;
-        NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
-        
-        detailViewController.recipe = [results objectAtIndex:0];
-        
-        UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
-        UINavigationController *navController = tabBarController.viewControllers[0];
-        [navController pushViewController:detailViewController animated:YES];
     }
-    return YES;
     
+    return YES;
 }
 
 #pragma mark - Fetched results controller
@@ -161,6 +140,35 @@
     
     return _fetchedResultsController;
 }
+
+- (void)launchDetailViewController: (NSString *)uniqueIdentifier {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:
+                                @"Storyboard" bundle:[NSBundle mainBundle]];
+    
+    
+    RecipeDetailViewController *detailViewController = [storyboard instantiateViewControllerWithIdentifier:@"RecipeDetailViewController"];
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    // Edit the entity name as appropriate.
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Recipe" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    
+    
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", uniqueIdentifier];
+    [fetchRequest setPredicate:predicate];
+    
+    NSError *error = nil;
+    NSArray *results = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    
+    detailViewController.recipe = [results objectAtIndex:0];
+    
+    UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
+    UINavigationController *navController = tabBarController.viewControllers[0];
+    [navController pushViewController:detailViewController animated:YES];
+  
+}
+
 
 #pragma mark - Core Data stack
 
